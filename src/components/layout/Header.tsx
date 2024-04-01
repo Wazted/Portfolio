@@ -10,7 +10,7 @@ export const Header = () => {
   }
 
   return (
-    <nav className="w-full px-2 bg-blue-200 fixed">
+    <nav className="w-full px-2 bg-blue-200 fixed z-10">
       <div className="h-10 flex flex-row justify-between items-center">
         <span className="font-bold text-white">Nav header</span>
         <div className="relative">

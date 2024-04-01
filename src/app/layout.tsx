@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
+import { VT323 } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
 
-const roboto = Roboto({ subsets: ['latin'], weight: '400' })
+const roboto = VT323({ subsets: ['latin'], weight: '400' })
 
 export const metadata: Metadata = {
   title: 'Matias Portfolio',

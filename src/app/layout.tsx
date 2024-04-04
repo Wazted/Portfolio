@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
-import { VT323 } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
-
-const roboto = VT323({ subsets: ['latin'], weight: '400' })
 
 export const metadata: Metadata = {
   title: 'Matias Portfolio',
@@ -17,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body>
         <Header />
         {children}
       </body>

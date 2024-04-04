@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useClickOutsideRef } from '@/hooks/useClickOutsideRef'
+import { VT323 } from 'next/font/google'
+
+const vt323 = VT323({ subsets: ['latin'], weight: ['400'] })
 
 const siteList = [
   {
@@ -61,7 +64,7 @@ const siteList = [
   }
 ]
 
-export const NextUsages = () => {
+export const WebDevelopment = () => {
   const modalRef = useRef<HTMLDivElement>(null)
   const [selectedSite, setSelectedSite] = useState<number>(0)
   const [showModal, setShowModal] = useState<boolean>(false)
@@ -85,9 +88,9 @@ export const NextUsages = () => {
     'rounded-[24px] bg-gray-900 shadow-md flex w-20 h-20 tablet:w-40 tablet:h-40 justify-center items-center font-bold text-2xl hover:shadow-xl hover:shadow-cyan-500/50 transition-all ease-in-out cursor-pointer'
 
   return (
-    <div className="bg-gray-950 text-white h-[calc(100vh-40px)] w-full p-4 relative">
+    <div className={vt323.className + ' bg-gray-950 text-white h-[calc(100vh-40px)] w-full p-4 relative'}>
       <div className="flex flex-col h-full items-center justify-center w-full">
-        <h2 className="text-2xl font-bold absolute top-2 left-4">Next.js Usages</h2>
+        <h2 className="text-2xl font-bold absolute top-2 left-4">Web Development</h2>
         <ul className="flex flex-row flex-wrap gap-8 justify-center items-center max-w-[75%] transition-all ease-in-out max-h-[75%]">
           {siteList.map((site, index) => (
             <li key={'site-' + index} className={clsx(siteIconeClassName)} onClick={() => selectSite(index)}>

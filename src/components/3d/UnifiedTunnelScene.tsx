@@ -100,8 +100,8 @@ function TunnelRings({ isMobile }: { isMobile: boolean }) {
 // --- Skill Tag Cloud (centered on screen) ---
 
 const CLOUD_RADIUS = 3.5
-const CLOUD_DIST_FAR = 14  // start distance (zoomed out)
-const CLOUD_DIST_NEAR = 2  // end distance (zoomed in, right in your face)
+const CLOUD_DIST_FAR = 14   // start distance (zoomed out)
+const CLOUD_DIST_BEHIND = -6 // end distance (behind camera)
 
 function SkillTag({ name, index, total, totalProgress }: {
   name: string
@@ -132,18 +132,18 @@ function SkillTag({ name, index, total, totalProgress }: {
     const t = state.clock.elapsedTime
     const p = totalProgress.current
 
-    // Visibility: stagger in 0.36→0.52, hold, fade out 0.58→0.64
-    const staggerStart = 0.36 + staggerDelay * 0.16
+    // Visibility: stagger in 0.60→0.73, fade out as tags fly past (0.73→0.80)
+    const staggerStart = 0.60 + staggerDelay * 0.13
     const fadeIn = Math.min(1, Math.max(0, (p - staggerStart) / 0.03))
-    const fadeOut = p > 0.58 ? Math.max(0, 1 - (p - 0.58) / 0.06) : 1
+    const fadeOut = p > 0.73 ? Math.max(0, 1 - (p - 0.73) / 0.07) : 1
     const vis = fadeIn * fadeOut
 
     groupRef.current.visible = vis > 0.01
     if (!groupRef.current.visible) return
 
-    // Zoom: cloud rushes toward user — p 0.33→0.58 maps far→near
-    const zoomT = Math.min(1, Math.max(0, (p - 0.33) / 0.25))
-    const dist = CLOUD_DIST_FAR + (CLOUD_DIST_NEAR - CLOUD_DIST_FAR) * zoomT
+    // Zoom: cloud rushes toward and through user — p 0.58→0.80 maps far→behind
+    const zoomT = Math.min(1, Math.max(0, (p - 0.58) / 0.22))
+    const dist = CLOUD_DIST_FAR + (CLOUD_DIST_BEHIND - CLOUD_DIST_FAR) * zoomT
 
     // Slow orbit around Y axis
     const angle = t * 0.1 + index * ((Math.PI * 2) / total)

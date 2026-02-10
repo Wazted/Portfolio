@@ -6,16 +6,16 @@ interface SkillsContentProps {
   totalProgress: React.MutableRefObject<number>
 }
 
-// Title: fade-in 0.33→0.38, hold until 0.58, fade-out 0.58→0.64
+// Title: fade-in 0.58→0.63, hold until 0.72, fade-out 0.72→0.78
 function getStyle(p: number) {
-  if (p < 0.33) return { opacity: 0, y: 30 }
-  if (p <= 0.38) {
-    const t = (p - 0.33) / 0.05
+  if (p < 0.58) return { opacity: 0, y: 30 }
+  if (p <= 0.63) {
+    const t = (p - 0.58) / 0.05
     return { opacity: t, y: 30 * (1 - t) }
   }
-  if (p <= 0.58) return { opacity: 1, y: 0 }
-  if (p <= 0.64) {
-    const t = (p - 0.58) / 0.06
+  if (p <= 0.72) return { opacity: 1, y: 0 }
+  if (p <= 0.78) {
+    const t = (p - 0.72) / 0.06
     return { opacity: 1 - t, y: 0 }
   }
   return { opacity: 0, y: 0 }

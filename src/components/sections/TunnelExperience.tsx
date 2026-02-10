@@ -17,6 +17,9 @@ export function TunnelExperience() {
   useEffect(() => {
     if (!containerRef.current) return
 
+    // Refresh after DOM updates with new height
+    ScrollTrigger.refresh()
+
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
@@ -28,19 +31,19 @@ export function TunnelExperience() {
     })
 
     return () => { st.kill() }
-  }, [])
+  }, [isMobile])
 
   return (
     <div
       ref={containerRef}
       id="tunnel"
       className="relative"
-      style={{ height: isMobile ? '1200vh' : '300vh' }}
+      style={{ height: isMobile ? '500vh' : '300vh' }}
     >
-      {/* Navigation anchors — 3 equal sections */}
+      {/* Navigation anchors — corrected for ScrollTrigger progress mapping */}
       <div id="projects" className="absolute top-0" />
-      <div id="skills" className="absolute" style={{ top: '33%' }} />
-      <div id="contact" className="absolute" style={{ top: '66%' }} />
+      <div id="skills" className="absolute" style={{ top: isMobile ? '60%' : '33%' }} />
+      <div id="contact" className="absolute" style={{ top: isMobile ? '90%' : '50%' }} />
 
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* 3D Tunnel */}

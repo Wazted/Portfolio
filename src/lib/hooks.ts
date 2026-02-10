@@ -7,7 +7,10 @@ import { useState, useEffect, useRef } from 'react'
  * threshold is actually crossed, not on every resize pixel.
  */
 export function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth < breakpoint
+  })
 
   useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)

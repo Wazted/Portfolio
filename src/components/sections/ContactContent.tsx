@@ -10,11 +10,11 @@ interface ContactContentProps {
   totalProgress: React.MutableRefObject<number>
 }
 
-// Contact: fade-in 0.66→0.73, hold 0.73→1.0 (no fade-out)
+// Contact: fade-in 0.75→0.82, hold 0.82→1.0 (no fade-out)
 function getStyle(p: number) {
-  if (p < 0.66) return { opacity: 0, scale: 0.9 }
-  if (p <= 0.73) {
-    const t = (p - 0.66) / 0.07
+  if (p < 0.75) return { opacity: 0, scale: 0.9 }
+  if (p <= 0.82) {
+    const t = (p - 0.75) / 0.07
     return { opacity: t, scale: 0.9 + t * 0.1 }
   }
   return { opacity: 1, scale: 1 }
@@ -83,59 +83,58 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
       style={{ opacity: 0, willChange: 'opacity, transform' }}
     >
       <div className="max-w-2xl w-full mx-auto px-6">
-        <div className="text-center mb-12">
-          <p className="text-accent font-mono text-sm mb-3">04. Contact</p>
-          <h2 className="text-3xl tablet:text-5xl laptop:text-6xl font-bold mb-6">
+        <div className="text-center mb-4 tablet:mb-12">
+          <p className="text-accent font-mono text-xs tablet:text-sm mb-1 tablet:mb-3">04. Contact</p>
+          <h2 className="text-2xl tablet:text-5xl laptop:text-6xl font-bold mb-2 tablet:mb-6">
             Travaillons <span className="text-gradient">ensemble</span>
           </h2>
-          <p className="text-text-secondary max-w-lg mx-auto">
-            Un projet en tete ? N&apos;hesitez pas a me contacter,
-            je vous repondrai dans les plus brefs delais.
+          <p className="text-text-secondary text-xs tablet:text-base max-w-lg mx-auto">
+            Un projet en tete ? Contactez-moi.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid mobile:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-3 tablet:space-y-6">
+          <div className="grid mobile:grid-cols-2 gap-3 tablet:gap-6">
             <div>
-              <label htmlFor="tunnel-name" className="block text-sm text-text-secondary mb-2">Nom</label>
+              <label htmlFor="tunnel-name" className="block text-xs tablet:text-sm text-text-secondary mb-1 tablet:mb-2">Nom</label>
               <input
                 id="tunnel-name"
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData((f) => ({ ...f, name: e.target.value }))}
-                className="w-full px-4 py-3 bg-surface/80 border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent focus:shadow-[0_0_15px_rgba(99,102,241,0.15)] transition-all duration-300 backdrop-blur-sm"
+                className="w-full px-3 py-2 tablet:px-4 tablet:py-3 bg-surface/80 border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-all duration-300 backdrop-blur-sm"
                 placeholder="Votre nom"
               />
             </div>
             <div>
-              <label htmlFor="tunnel-email" className="block text-sm text-text-secondary mb-2">Email</label>
+              <label htmlFor="tunnel-email" className="block text-xs tablet:text-sm text-text-secondary mb-1 tablet:mb-2">Email</label>
               <input
                 id="tunnel-email"
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData((f) => ({ ...f, email: e.target.value }))}
-                className="w-full px-4 py-3 bg-surface/80 border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent focus:shadow-[0_0_15px_rgba(99,102,241,0.15)] transition-all duration-300 backdrop-blur-sm"
+                className="w-full px-3 py-2 tablet:px-4 tablet:py-3 bg-surface/80 border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-all duration-300 backdrop-blur-sm"
                 placeholder="votre@email.com"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="tunnel-message" className="block text-sm text-text-secondary mb-2">Message</label>
+            <label htmlFor="tunnel-message" className="block text-xs tablet:text-sm text-text-secondary mb-1 tablet:mb-2">Message</label>
             <textarea
               id="tunnel-message"
               required
-              rows={6}
+              rows={3}
               value={formData.message}
               onChange={(e) => setFormData((f) => ({ ...f, message: e.target.value }))}
-              className="w-full px-4 py-3 bg-surface/80 border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent focus:shadow-[0_0_15px_rgba(99,102,241,0.15)] transition-all duration-300 resize-none backdrop-blur-sm"
+              className="w-full px-3 py-2 tablet:px-4 tablet:py-3 bg-surface/80 border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-all duration-300 resize-none backdrop-blur-sm"
               placeholder="Decrivez votre projet..."
             />
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center [&>div]:scale-[0.85] [&>div]:origin-center tablet:[&>div]:scale-100">
             <ReCAPTCHA
               ref={recaptchaRef}
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
@@ -149,7 +148,7 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
             disabled={status === 'sending' || !captchaToken}
             whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(99, 102, 241, 0.3)' }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-3.5 bg-accent hover:bg-accent-light disabled:opacity-50 text-white rounded-lg font-medium transition-all duration-300 relative overflow-hidden group"
+            className="w-full py-2.5 tablet:py-3.5 bg-accent hover:bg-accent-light disabled:opacity-50 text-white text-sm tablet:text-base rounded-lg font-medium transition-all duration-300 relative overflow-hidden group"
           >
             <span className="relative z-10">
               {status === 'sending' && 'Envoi en cours...'}

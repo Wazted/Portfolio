@@ -9,16 +9,16 @@ interface ProjectsContentProps {
   totalProgress: React.MutableRefObject<number>
 }
 
-// Projects: fade-in 0.00→0.05, hold 0.05→0.27, fade-out 0.27→0.33
+// Projects: fade-in 0.05→0.10, hold 0.10→0.44, fade-out 0.44→0.50
 function getStyle(p: number) {
-  if (p < 0) return { opacity: 0, scale: 0.9 }
-  if (p <= 0.05) {
-    const t = p / 0.05
+  if (p < 0.05) return { opacity: 0, scale: 0.9 }
+  if (p <= 0.10) {
+    const t = (p - 0.05) / 0.05
     return { opacity: t, scale: 0.9 + t * 0.1 }
   }
-  if (p <= 0.27) return { opacity: 1, scale: 1 }
-  if (p <= 0.33) {
-    const t = (p - 0.27) / 0.06
+  if (p <= 0.44) return { opacity: 1, scale: 1 }
+  if (p <= 0.50) {
+    const t = (p - 0.44) / 0.06
     return { opacity: 1 - t, scale: 1 + t * 0.3 }
   }
   return { opacity: 0, scale: 1.3 }
@@ -46,8 +46,8 @@ export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
 
       // Mobile: one card at a time based on scroll progress
       if (isMobile) {
-        // p 0.01→0.32 maps to card index 0→(TOTAL-1) — nearly full section
-        const t = Math.max(0, Math.min(1, (p - 0.01) / 0.31))
+        // p 0.10→0.48 maps to card index 0→(TOTAL-1) — starts after fade-in
+        const t = Math.max(0, Math.min(1, (p - 0.10) / 0.38))
         const activeIndex = Math.min(TOTAL - 1, Math.floor(t * TOTAL))
 
         cardsRef.current.forEach((card, i) => {

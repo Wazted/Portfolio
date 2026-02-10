@@ -24,28 +24,48 @@ function getStyle(p: number) {
   return { opacity: 0, scale: 1.3 }
 }
 
+const TOTAL = projects.length
+
 export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
+  const dotsRef = useRef<(HTMLDivElement | null)[]>([])
   const isMobile = useIsMobile()
 
   useEffect(() => {
     let raf: number
     const update = () => {
+      const p = totalProgress.current
+
       if (overlayRef.current) {
-        const p = totalProgress.current
         const { opacity, scale } = getStyle(p)
         overlayRef.current.style.opacity = String(opacity)
         overlayRef.current.style.transform = `scale(${scale})`
         overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
       }
 
-      if (isMobile && trackRef.current) {
-        const p = totalProgress.current
-        const t = Math.max(0, Math.min(1, (p - 0.02) / 0.28))
-        const cardWidth = window.innerWidth * 0.80 + 12
-        const maxShift = cardWidth * (projects.length - 1)
-        trackRef.current.style.transform = `translateX(${-t * maxShift}px)`
+      // Mobile: one card at a time based on scroll progress
+      if (isMobile) {
+        // p 0.01→0.32 maps to card index 0→(TOTAL-1) — nearly full section
+        const t = Math.max(0, Math.min(1, (p - 0.01) / 0.31))
+        const activeIndex = Math.min(TOTAL - 1, Math.floor(t * TOTAL))
+
+        cardsRef.current.forEach((card, i) => {
+          if (!card) return
+          if (i === activeIndex) {
+            card.style.opacity = '1'
+            card.style.transform = 'scale(1)'
+          } else {
+            card.style.opacity = '0'
+            card.style.transform = 'scale(0.92)'
+          }
+        })
+
+        dotsRef.current.forEach((dot, i) => {
+          if (!dot) return
+          dot.style.opacity = i === activeIndex ? '1' : '0.3'
+          dot.style.transform = i === activeIndex ? 'scale(1.3)' : 'scale(1)'
+        })
       }
 
       raf = requestAnimationFrame(update)
@@ -68,22 +88,41 @@ export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
           </h2>
         </div>
 
-        <div className="overflow-hidden tablet:overflow-visible">
-          <div
-            ref={trackRef}
-            className="flex gap-3 tablet:grid tablet:grid-cols-2 laptop:grid-cols-3"
-            style={{ willChange: 'transform' }}
-          >
-            {projects.map((project, i) => (
-              <div key={project.title} className="min-w-[80vw] tablet:min-w-0">
-                <ProjectCard project={project} index={i} />
-              </div>
-            ))}
-          </div>
+        {/* Desktop: grid */}
+        <div className="hidden tablet:grid tablet:grid-cols-2 laptop:grid-cols-3 gap-3">
+          {projects.map((project, i) => (
+            <ProjectCard key={project.title} project={project} index={i} />
+          ))}
         </div>
 
-        <p className="tablet:hidden text-center text-text-muted/60 text-xs mt-4 animate-pulse">
-          Scrollez pour voir plus
+        {/* Mobile: one card at a time */}
+        <div className="tablet:hidden relative h-[280px]">
+          {projects.map((project, i) => (
+            <div
+              key={project.title}
+              ref={(el) => { cardsRef.current[i] = el }}
+              className="absolute inset-0 transition-all duration-500 ease-out"
+              style={{ opacity: i === 0 ? 1 : 0, transform: i === 0 ? 'scale(1)' : 'scale(0.92)' }}
+            >
+              <ProjectCard project={project} index={i} />
+            </div>
+          ))}
+        </div>
+
+        {/* Dots indicator — mobile only */}
+        <div className="tablet:hidden flex justify-center gap-2 mt-5">
+          {projects.map((_, i) => (
+            <div
+              key={i}
+              ref={(el) => { dotsRef.current[i] = el }}
+              className="w-2 h-2 rounded-full bg-accent transition-all duration-300"
+              style={{ opacity: i === 0 ? 1 : 0.3 }}
+            />
+          ))}
+        </div>
+
+        <p className="tablet:hidden text-center text-text-muted/60 text-xs mt-3 animate-pulse">
+          Scrollez pour voir les projets
         </p>
       </div>
     </div>

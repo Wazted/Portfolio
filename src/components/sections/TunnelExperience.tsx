@@ -35,7 +35,7 @@ export function TunnelExperience() {
       ref={containerRef}
       id="tunnel"
       className="relative"
-      style={{ height: '300vh' }}
+      style={{ height: isMobile ? '1200vh' : '300vh' }}
     >
       {/* Navigation anchors — 3 equal sections */}
       <div id="projects" className="absolute top-0" />

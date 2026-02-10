@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef, useEffect, useState, FormEvent } from 'react'
+import { useRef, useEffect, useState, useCallback, FormEvent } from 'react'
 import { motion } from 'framer-motion'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
 
@@ -21,8 +22,14 @@ function getStyle(p: number) {
 
 export function ContactContent({ totalProgress }: ContactContentProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
   const [status, setStatus] = useState<FormStatus>('idle')
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+
+  const onCaptchaChange = useCallback((token: string | null) => {
+    setCaptchaToken(token)
+  }, [])
 
   useEffect(() => {
     let raf: number
@@ -42,6 +49,7 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    if (!captchaToken) return
     setStatus('sending')
 
     try {
@@ -58,6 +66,8 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
       )
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
+      setCaptchaToken(null)
+      recaptchaRef.current?.reset()
       setTimeout(() => setStatus('idle'), 5000)
     } catch {
       setStatus('error')
@@ -124,9 +134,18 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
             />
           </div>
 
+          <div className="flex justify-center">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              onChange={onCaptchaChange}
+              theme="dark"
+            />
+          </div>
+
           <motion.button
             type="submit"
-            disabled={status === 'sending'}
+            disabled={status === 'sending' || !captchaToken}
             whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(99, 102, 241, 0.3)' }}
             whileTap={{ scale: 0.98 }}
             className="w-full py-3.5 bg-accent hover:bg-accent-light disabled:opacity-50 text-white rounded-lg font-medium transition-all duration-300 relative overflow-hidden group"

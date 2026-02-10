@@ -61,6 +61,7 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
+          'g-recaptcha-response': captchaToken,
         },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY'
       )

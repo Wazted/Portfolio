@@ -121,7 +121,7 @@ export function About() {
             {highlights.map((item) => (
               <div
                 key={item.label}
-                className="glass rounded-xl p-6 text-center hover:border-accent/30 transition-all duration-300 flex-1 min-w-[140px]"
+                className="glass rounded-xl p-6 text-center hover:border-accent/30 transition-all duration-300 flex-1 min-w-[160px]"
               >
                 <p className="text-3xl tablet:text-4xl font-bold text-gradient mb-2">
                   <AnimatedCounter end={item.number} suffix={item.suffix} />

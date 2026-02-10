@@ -42,7 +42,7 @@ export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
 
       if (isMobile && trackRef.current) {
         const p = totalProgress.current
-        const t = Math.max(0, Math.min(1, (p - 0.05) / 0.22))
+        const t = Math.max(0, Math.min(1, (p - 0.02) / 0.28))
         const cardWidth = window.innerWidth * 0.80 + 12
         const maxShift = cardWidth * (projects.length - 1)
         trackRef.current.style.transform = `translateX(${-t * maxShift}px)`
@@ -81,6 +81,10 @@ export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
             ))}
           </div>
         </div>
+
+        <p className="tablet:hidden text-center text-text-muted/60 text-xs mt-4 animate-pulse">
+          Scrollez pour voir plus
+        </p>
       </div>
     </div>
   )

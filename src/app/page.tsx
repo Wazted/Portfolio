@@ -1,24 +1,46 @@
 'use client'
-import { RefObject, useRef, useState } from 'react'
-import { WebDevelopment } from '@/components/slides/WebDevelopment'
-import { MobileDevelopment } from '@/components/slides/MobileDevelopment'
 
-export default function App() {
-  const [refs] = useState<RefObject<HTMLDivElement>[]>(Array.from({ length: 4 }).map(() => useRef(null)))
-  const slides = [
-    <WebDevelopment />,
-    <MobileDevelopment />,
-    <div className="h-[calc(100vh-40px)] w-full bg-green-200">csdasd</div>,
-    <div className="h-[calc(100vh-40px)] w-full bg-yellow-200">deerererer</div>
-  ]
+import dynamic from 'next/dynamic'
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
 
+const SmoothScroll = dynamic(
+  () => import('@/components/providers/SmoothScroll').then(m => m.SmoothScroll),
+  { ssr: false }
+)
+const CustomCursor = dynamic(
+  () => import('@/components/ui/CustomCursor').then(m => m.CustomCursor),
+  { ssr: false }
+)
+const NoiseOverlay = dynamic(
+  () => import('@/components/ui/NoiseOverlay').then(m => m.NoiseOverlay),
+  { ssr: false }
+)
+const Hero = dynamic(
+  () => import('@/components/sections/Hero').then(m => m.Hero),
+  { ssr: false }
+)
+const About = dynamic(
+  () => import('@/components/sections/About').then(m => m.About),
+  { ssr: false }
+)
+const TunnelExperience = dynamic(
+  () => import('@/components/sections/TunnelExperience').then(m => m.TunnelExperience),
+  { ssr: false }
+)
+
+export default function Home() {
   return (
-    <main className="h-screen flex flex-col items-center justify-between snap-y snap-mandatory scroll-pt-10 overflow-auto">
-      {slides.map((slide, index) => (
-        <div className="w-full snap-center" ref={refs[index]} key={'pres-slide-' + index}>
-          {slides[index]}
-        </div>
-      ))}
-    </main>
+    <SmoothScroll>
+      <CustomCursor />
+      <NoiseOverlay />
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <TunnelExperience />
+      </main>
+      <Footer />
+    </SmoothScroll>
   )
 }

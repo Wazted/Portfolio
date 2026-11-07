@@ -1,9 +1,11 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import styles from './ClientWork.module.css'
 
 const clients = [
   {
     name: 'DermaSana Académie',
+    slug: 'dermasana-academie',
     category: 'Formation & esthétique',
     url: 'https://academie.dermasana.fr/',
     image: '/images/clients/dermasana.webp',
@@ -12,6 +14,7 @@ const clients = [
   },
   {
     name: 'Némésis Investigations',
+    slug: 'nemesis-investigations',
     category: 'Investigation privée',
     url: 'https://nemesis-investigations.fr/',
     image: '/images/clients/nemesis.webp',
@@ -73,7 +76,7 @@ export function ClientWork() {
       <div className={styles.workGrid}>
         {clients.map((client) => (
           <article key={client.name} className={styles.project}>
-            <a className={styles.preview} href={client.url} target="_blank" rel="noopener noreferrer" aria-label={`Visiter ${client.name} (nouvel onglet)`}>
+            <a className={styles.preview} href={client.url} target="_blank" rel="noopener noreferrer" aria-label={`Visiter le site ${client.name} (nouvel onglet)`}>
               <Image src={client.image} alt={`Aperçu de la page d’accueil de ${client.name}`} width={1440} height={1000} sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1248px) 46vw, 576px" loading="lazy" />
               <span className={styles.visit}>Visiter le site <Arrow diagonal /></span>
             </a>
@@ -83,6 +86,7 @@ export function ClientWork() {
             </div>
             <p className={styles.projectDescription}>{client.description}</p>
             <p className={styles.projectDetail}>{client.detail}</p>
+            <Link className={styles.methodLink} href={`/realisations/${client.slug}`}>Découvrir cette réalisation <Arrow /></Link>
           </article>
         ))}
       </div>
@@ -91,7 +95,7 @@ export function ClientWork() {
         <div className={styles.methodIntro}>
           <h2>On le construit ensemble.<br /><span>Vous le faites vivre.</span></h2>
           <p>Un interlocuteur, des étapes claires et votre mot à dire tout au long du projet.</p>
-          <a href="#contact" className={styles.methodLink}>Discutons de votre projet <Arrow /></a>
+          <Link href="/creation-site-vitrine" className={styles.methodLink}>La création de votre site en détail <Arrow /></Link>
         </div>
         <ol className={styles.phases}>
           {phases.map((phase, index) => (

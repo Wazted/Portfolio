@@ -3,14 +3,16 @@
 import { Suspense, useRef, useEffect, useMemo } from 'react'
 import { createScrollProgress } from '@/lib/scroll-progress'
 import { ScrollTrigger } from '@/lib/gsap'
-import { useIsMobile } from '@/lib/hooks'
-import { UnifiedTunnelScene } from '@/components/3d/UnifiedTunnelScene'
+import { useIsMobile, useSceneActivity } from '@/lib/hooks'
+import dynamic from 'next/dynamic'
+const UnifiedTunnelScene = dynamic(() => import('@/components/3d/UnifiedTunnelScene').then(m => m.UnifiedTunnelScene), { ssr: false })
 import { ProjectsContent } from './ProjectsContent'
 import { SkillsContent } from './SkillsContent'
 import { ContactContent } from './ContactContent'
 
 export function TunnelExperience() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { ref: sceneRef, ready: sceneReady } = useSceneActivity()
   const totalProgress = useMemo(createScrollProgress, [])
   const isMobile = useIsMobile()
 
@@ -47,17 +49,17 @@ export function TunnelExperience() {
       <div id="skills" className="absolute" style={{ top: isMobile ? '54.4%' : '45.333%' }} />
       <div id="contact" className="absolute" style={{ top: isMobile ? '67.2%' : '56%' }} />
 
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div ref={sceneRef} className="sticky top-0 h-screen w-full overflow-hidden">
         {/* 3D Tunnel */}
         <Suspense fallback={
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
           </div>
         }>
-          <UnifiedTunnelScene
+          {sceneReady && <UnifiedTunnelScene
             totalProgress={totalProgress}
             isMobile={isMobile}
-          />
+          />}
         </Suspense>
 
         {/* Content Overlays — appear/disappear in sequence */}

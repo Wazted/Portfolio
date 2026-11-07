@@ -52,7 +52,7 @@ export function TextScramble({ text, className = '', delay = 0, speed = 30 }: Te
 
   return (
     <span className={`font-mono ${className}`}>
-      {started ? displayed : '\u00A0'.repeat(text.length)}
+      {started ? displayed : text}
     </span>
   )
 }

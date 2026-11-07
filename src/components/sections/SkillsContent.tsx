@@ -1,9 +1,11 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useProgressEffect, type ScrollProgress } from '@/lib/scroll-progress'
+
+import { useRef } from 'react'
 
 interface SkillsContentProps {
-  totalProgress: React.MutableRefObject<number>
+  totalProgress: ScrollProgress
 }
 
 // Title: fade-in 0.58→0.63, hold until 0.72, fade-out 0.72→0.78
@@ -24,21 +26,15 @@ function getStyle(p: number) {
 export function SkillsContent({ totalProgress }: SkillsContentProps) {
   const ref = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    let raf: number
-    const update = () => {
-      if (ref.current) {
-        const p = totalProgress.current
-        const { opacity, y } = getStyle(p)
-        ref.current.style.opacity = String(opacity)
-        ref.current.style.transform = `translateY(${y}px)`
-        ref.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
-      }
-      raf = requestAnimationFrame(update)
+  useProgressEffect(totalProgress, () => {
+    if (ref.current) {
+      const p = totalProgress.current
+      const { opacity, y } = getStyle(p)
+      ref.current.style.opacity = String(opacity)
+      ref.current.style.transform = `translateY(${y}px)`
+      ref.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
     }
-    raf = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(raf)
-  }, [totalProgress])
+  })
 
   return (
     <div className="absolute inset-0 flex items-start justify-center pt-[12vh] pointer-events-none z-10">

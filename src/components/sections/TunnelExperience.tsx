@@ -1,8 +1,9 @@
 'use client'
 
-import { Suspense, useRef, useEffect } from 'react'
+import { Suspense, useRef, useEffect, useMemo } from 'react'
+import { createScrollProgress } from '@/lib/scroll-progress'
 import { ScrollTrigger } from '@/lib/gsap'
-import { useIsMobile, useMousePosition } from '@/lib/hooks'
+import { useIsMobile } from '@/lib/hooks'
 import { UnifiedTunnelScene } from '@/components/3d/UnifiedTunnelScene'
 import { ProjectsContent } from './ProjectsContent'
 import { SkillsContent } from './SkillsContent'
@@ -10,9 +11,8 @@ import { ContactContent } from './ContactContent'
 
 export function TunnelExperience() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const totalProgress = useRef(0)
+  const totalProgress = useMemo(createScrollProgress, [])
   const isMobile = useIsMobile()
-  const mousePos = useMousePosition()
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -25,13 +25,14 @@ export function TunnelExperience() {
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
+      onRefresh: (self) => totalProgress.set(self.progress),
       onUpdate: (self) => {
-        totalProgress.current = self.progress
+        totalProgress.set(self.progress)
       },
     })
 
     return () => { st.kill() }
-  }, [isMobile])
+  }, [isMobile, totalProgress])
 
   return (
     <div
@@ -41,9 +42,10 @@ export function TunnelExperience() {
       style={{ height: isMobile ? '500vh' : '300vh' }}
     >
       {/* Navigation anchors — corrected for ScrollTrigger progress mapping */}
-      <div id="projects" className="absolute top-0" />
-      <div id="skills" className="absolute" style={{ top: isMobile ? '60%' : '33%' }} />
-      <div id="contact" className="absolute" style={{ top: isMobile ? '90%' : '50%' }} />
+      {/* Anchor position = target progress × (container height − viewport height). */}
+      <div id="projects" className="absolute" style={{ top: isMobile ? '9.6%' : '8%' }} />
+      <div id="skills" className="absolute" style={{ top: isMobile ? '54.4%' : '45.333%' }} />
+      <div id="contact" className="absolute" style={{ top: isMobile ? '67.2%' : '56%' }} />
 
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* 3D Tunnel */}
@@ -55,7 +57,6 @@ export function TunnelExperience() {
           <UnifiedTunnelScene
             totalProgress={totalProgress}
             isMobile={isMobile}
-            mousePos={mousePos}
           />
         </Suspense>
 

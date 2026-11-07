@@ -2,11 +2,11 @@
 
 import { useRef, useMemo, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
+import { useSceneActivity } from '@/lib/hooks'
 import * as THREE from 'three'
 
-const PARTICLE_COUNT_DESKTOP = 4000
-const PARTICLE_COUNT_MOBILE = 1500
+const PARTICLE_COUNT_DESKTOP = 1800
+const PARTICLE_COUNT_MOBILE = 600
 
 function getTextPositions(text: string, count: number, width: number): Float32Array {
   const canvas = document.createElement('canvas')
@@ -57,7 +57,6 @@ function ParticleField({ scrollProgress, isMobile }: { scrollProgress: React.Mut
   const meshRef = useRef<THREE.Points>(null!)
   const { viewport } = useThree()
   const particleCount = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP
-  const mousePos = useRef(new THREE.Vector2(0, 0))
 
   const [textPositions, setTextPositions] = useState<Float32Array | null>(null)
 
@@ -84,18 +83,7 @@ function ParticleField({ scrollProgress, isMobile }: { scrollProgress: React.Mut
     [particleCount]
   )
 
-  useEffect(() => {
-    if (!isMobile) {
-      const handler = (e: MouseEvent) => {
-        mousePos.current.x = (e.clientX / window.innerWidth) * 2 - 1
-        mousePos.current.y = -(e.clientY / window.innerHeight) * 2 + 1
-      }
-      window.addEventListener('mousemove', handler, { passive: true })
-      return () => window.removeEventListener('mousemove', handler)
-    }
-  }, [isMobile])
-
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!meshRef.current || !textPositions) return
 
     const geo = meshRef.current.geometry
@@ -104,6 +92,8 @@ function ParticleField({ scrollProgress, isMobile }: { scrollProgress: React.Mut
     const scroll = scrollProgress.current
     const time = performance.now() * 0.001
 
+    const explosionFactor = Math.min(scroll * 3, 1)
+    const blend = 1 - Math.exp(-10 * Math.min(delta, 0.05))
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3
       const tx = textPositions[i3]
@@ -113,38 +103,18 @@ function ParticleField({ scrollProgress, isMobile }: { scrollProgress: React.Mut
       const ry = randomPositions[i3 + 1]
       const rz = randomPositions[i3 + 2]
 
-      const explosionFactor = Math.min(scroll * 3, 1)
-
       let targetX = tx + (rx - tx) * explosionFactor
       let targetY = ty + (ry - ty) * explosionFactor
-      let targetZ = tz + (rz - tz) * explosionFactor
+      const targetZ = tz + (rz - tz) * explosionFactor
 
       // Add subtle floating
       targetX += Math.sin(time * 0.5 + i * 0.01) * 0.02 * (1 - explosionFactor)
       targetY += Math.cos(time * 0.3 + i * 0.01) * 0.02 * (1 - explosionFactor)
 
-      // Cursor repulsion (desktop only)
-      if (!isMobile) {
-        const mx = mousePos.current.x * viewport.width * 0.5
-        const my = mousePos.current.y * viewport.height * 0.5
-        const dx = targetX - mx
-        const dy = targetY - my
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 1.5) {
-          const force = (1.5 - dist) * 0.3 * (1 - explosionFactor)
-          targetX += (dx / dist) * force
-          targetY += (dy / dist) * force
-        }
-      }
-
       // Lerp
-      currentPositions[i3] += (targetX - currentPositions[i3]) * 0.08
-      currentPositions[i3 + 1] += (targetY - currentPositions[i3 + 1]) * 0.08
-      currentPositions[i3 + 2] += (targetZ - currentPositions[i3 + 2]) * 0.08
-
-      posAttr.array[i3] = currentPositions[i3]
-      posAttr.array[i3 + 1] = currentPositions[i3 + 1]
-      posAttr.array[i3 + 2] = currentPositions[i3 + 2]
+      currentPositions[i3] += (targetX - currentPositions[i3]) * blend
+      currentPositions[i3 + 1] += (targetY - currentPositions[i3 + 1]) * blend
+      currentPositions[i3 + 2] += (targetZ - currentPositions[i3 + 2]) * blend
     }
 
     posAttr.needsUpdate = true
@@ -190,7 +160,7 @@ function FloatingRings({ scrollProgress }: { scrollProgress: React.MutableRefObj
     <group ref={group}>
       {[1.8, 2.4, 3.0].map((radius, i) => (
         <mesh key={i} position={[0, 0, -2]}>
-          <torusGeometry args={[radius, 0.005, 16, 100]} />
+          <torusGeometry args={[radius, 0.005, 4, 48]} />
           <meshBasicMaterial
             color={i === 0 ? '#6366f1' : i === 1 ? '#a855f7' : '#3b82f6'}
             transparent
@@ -208,25 +178,20 @@ interface HeroSceneProps {
 }
 
 export function HeroScene({ scrollProgress, isMobile }: HeroSceneProps) {
+  const { ref, ready, active } = useSceneActivity()
   return (
-    <div className="absolute inset-0 -z-10">
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 60 }}
-        dpr={isMobile ? 1 : [1, 1.5]}
-        gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }}
-      >
-        <ParticleField scrollProgress={scrollProgress} isMobile={isMobile} />
-        <FloatingRings scrollProgress={scrollProgress} />
-
-        <EffectComposer>
-          <Bloom
-            luminanceThreshold={0.2}
-            luminanceSmoothing={0.9}
-            intensity={isMobile ? 0.3 : 0.6}
-          />
-          <Vignette darkness={0.5} offset={0.3} />
-        </EffectComposer>
-      </Canvas>
+    <div ref={ref} className="hero-art absolute inset-0 -z-10">
+      {ready && (
+        <Canvas
+          frameloop={active ? 'always' : 'never'}
+          camera={{ position: [0, 0, 5], fov: 60 }}
+          dpr={1}
+          gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+        >
+          <ParticleField scrollProgress={scrollProgress} isMobile={isMobile} />
+          <FloatingRings scrollProgress={scrollProgress} />
+        </Canvas>
+      )}
     </div>
   )
 }

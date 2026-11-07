@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const navLinks = [
   { label: 'Accueil', href: '#hero' },
+  { label: 'Sites web', href: '#sites' },
+  { label: 'Méthode', href: '#methode' },
   { label: 'À propos', href: '#about' },
   { label: 'Projets', href: '#projects' },
-  { label: 'Skills', href: '#skills' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -29,7 +30,7 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`portfolio-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'glass py-3' : 'py-5 bg-transparent'
       }`}
     >

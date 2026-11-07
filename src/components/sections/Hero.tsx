@@ -17,31 +17,31 @@ export function Hero() {
     if (!sectionRef.current || !contentRef.current) return
 
     // Scroll-driven particle explosion
-    const st = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: 'bottom top',
-      onUpdate: (self) => {
-        scrollProgress.current = self.progress
-      },
-    })
-
-    // Fade out content on scroll
-    gsap.to(contentRef.current, {
-      opacity: 0,
-      y: -60,
-      ease: 'none',
-      scrollTrigger: {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: '40% top',
-        scrub: true,
-      },
-    })
+        end: 'bottom top',
+        onUpdate: (self) => {
+          scrollProgress.current = self.progress
+        },
+      })
 
-    return () => {
-      st.kill()
-    }
+      // Fade out content on scroll
+      gsap.to(contentRef.current, {
+        opacity: 0,
+        y: -60,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: '40% top',
+          scrub: true,
+        },
+      })
+
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -54,7 +54,7 @@ export function Hero() {
         <HeroScene scrollProgress={scrollProgress} isMobile={isMobile} />
       </Suspense>
 
-      <div ref={contentRef} className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div ref={contentRef} className="hero-content relative z-10 text-center px-6 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -79,7 +79,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8 }}
-          className="glass rounded-xl px-6 py-4 max-w-2xl mx-auto mb-10"
+          className="hero-description glass rounded-xl px-6 py-4 max-w-2xl mx-auto mb-10"
         >
           <p className="text-text-secondary text-lg tablet:text-xl leading-relaxed">
             Du pixel au serveur, je transforme vos idées en apps qui claquent — sans bug, promis (enfin presque).

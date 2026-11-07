@@ -1,13 +1,16 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback, FormEvent } from 'react'
+import { useProgressEffect, type ScrollProgress } from '@/lib/scroll-progress'
+
+import { useRef, useState, useCallback, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
+const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 
 interface ContactContentProps {
-  totalProgress: React.MutableRefObject<number>
+  totalProgress: ScrollProgress
 }
 
 // Contact: fade-in 0.75→0.82, hold 0.82→1.0 (no fade-out)
@@ -31,21 +34,15 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
     setCaptchaToken(token)
   }, [])
 
-  useEffect(() => {
-    let raf: number
-    const update = () => {
-      if (overlayRef.current) {
-        const p = totalProgress.current
-        const { opacity, scale } = getStyle(p)
-        overlayRef.current.style.opacity = String(opacity)
-        overlayRef.current.style.transform = `scale(${scale})`
-        overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
-      }
-      raf = requestAnimationFrame(update)
+  useProgressEffect(totalProgress, () => {
+    if (overlayRef.current) {
+      const p = totalProgress.current
+      const { opacity, scale } = getStyle(p)
+      overlayRef.current.style.opacity = String(opacity)
+      overlayRef.current.style.transform = `scale(${scale})`
+      overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
     }
-    raf = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(raf)
-  }, [totalProgress])
+  })
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -135,12 +132,15 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
           </div>
 
           <div className="flex justify-center [&>div]:scale-[0.85] [&>div]:origin-center tablet:[&>div]:scale-100">
-            <ReCAPTCHA
+            {recaptchaSiteKey ? <ReCAPTCHA
               ref={recaptchaRef}
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              sitekey={recaptchaSiteKey}
               onChange={onCaptchaChange}
               theme="dark"
-            />
+            /> : <p className="text-sm text-text-secondary text-center">
+              Le formulaire est momentanément indisponible.{' '}
+              <a className="text-accent-light underline underline-offset-4" href="https://fr.linkedin.com/in/matias-campos-0b0779174" target="_blank" rel="noopener noreferrer">Contactez-moi sur LinkedIn<span className="sr-only"> (nouvel onglet)</span></a>.
+            </p>}
           </div>
 
           <motion.button

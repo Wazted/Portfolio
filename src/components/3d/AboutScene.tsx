@@ -1,23 +1,27 @@
 'use client'
 
-import { useRef, useMemo, useEffect } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useRef, useMemo } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useSceneActivity } from '@/lib/hooks'
 import * as THREE from 'three'
 
 function MorphingShape({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
   const meshRef = useRef<THREE.Mesh>(null!)
 
   const basePositions = useMemo(() => {
-    const sphere = new THREE.IcosahedronGeometry(1.5, 4)
+    const sphere = new THREE.IcosahedronGeometry(1.5, 2)
     const box = new THREE.BoxGeometry(2.2, 2.2, 2.2, 4, 4, 4)
     const torus = new THREE.TorusGeometry(1.2, 0.5, 8, 24)
 
-    return {
+    const positions = {
       sphere: Float32Array.from(sphere.getAttribute('position').array),
       box: Float32Array.from(box.getAttribute('position').array),
       torus: Float32Array.from(torus.getAttribute('position').array),
-      sphereCount: sphere.getAttribute('position').count,
     }
+    sphere.dispose()
+    box.dispose()
+    torus.dispose()
+    return positions
   }, [])
 
   useFrame((state) => {
@@ -64,7 +68,7 @@ function MorphingShape({ scrollProgress }: { scrollProgress: React.MutableRefObj
 
   return (
     <mesh ref={meshRef}>
-      <icosahedronGeometry args={[1.5, 4]} />
+      <icosahedronGeometry args={[1.5, 2]} />
       <meshStandardMaterial color="#6366f1" wireframe transparent opacity={0.6} />
     </mesh>
   )
@@ -72,19 +76,7 @@ function MorphingShape({ scrollProgress }: { scrollProgress: React.MutableRefObj
 
 function WaveGrid({ isMobile }: { isMobile: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null!)
-  const mouseRef = useRef({ x: 0, y: 0 })
-  const { viewport } = useThree()
-  const segments = isMobile ? 30 : 60
-
-  useEffect(() => {
-    if (isMobile) return
-    const handler = (e: MouseEvent) => {
-      mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1
-      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
-    }
-    window.addEventListener('mousemove', handler, { passive: true })
-    return () => window.removeEventListener('mousemove', handler)
-  }, [isMobile])
+  const segments = isMobile ? 14 : 24
 
   useFrame((state) => {
     if (!meshRef.current) return
@@ -93,21 +85,12 @@ function WaveGrid({ isMobile }: { isMobile: boolean }) {
     if (!posAttr) return
 
     const t = state.clock.elapsedTime
-    const mx = mouseRef.current.x * viewport.width * 0.5
-    const my = mouseRef.current.y * viewport.height * 0.5
 
     for (let i = 0; i < posAttr.count; i++) {
       const x = posAttr.getX(i)
       const y = posAttr.getY(i)
 
       let z = Math.sin(x * 0.8 + t) * 0.15 + Math.cos(y * 0.8 + t * 0.7) * 0.15
-
-      if (!isMobile) {
-        const dx = x - mx
-        const dy = y - my
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        z += Math.sin(dist * 3 - t * 3) * Math.max(0, 0.3 - dist * 0.1)
-      }
 
       posAttr.setZ(i, z)
     }
@@ -128,18 +111,22 @@ interface AboutSceneProps {
 }
 
 export function AboutScene({ scrollProgress, isMobile }: AboutSceneProps) {
+  const { ref, ready, active } = useSceneActivity()
   return (
-    <div className="absolute inset-0 -z-10">
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 50 }}
-        dpr={isMobile ? 1 : [1, 1.5]}
-        gl={{ alpha: true, antialias: !isMobile }}
-      >
-        <ambientLight intensity={0.3} />
-        <pointLight position={[5, 5, 5]} intensity={0.6} color="#6366f1" />
-        <MorphingShape scrollProgress={scrollProgress} />
-        <WaveGrid isMobile={isMobile} />
-      </Canvas>
+    <div ref={ref} className="absolute inset-0 -z-10">
+      {ready && (
+        <Canvas
+          frameloop={active ? 'always' : 'never'}
+          camera={{ position: [0, 0, 5], fov: 50 }}
+          dpr={1}
+          gl={{ alpha: true, antialias: false }}
+        >
+          <ambientLight intensity={0.3} />
+          <pointLight position={[5, 5, 5]} intensity={0.6} color="#6366f1" />
+          <MorphingShape scrollProgress={scrollProgress} />
+          <WaveGrid isMobile={isMobile} />
+        </Canvas>
+      )}
     </div>
   )
 }

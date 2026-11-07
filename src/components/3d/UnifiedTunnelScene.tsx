@@ -3,7 +3,7 @@
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
+import { useSceneActivity } from '@/lib/hooks'
 import * as THREE from 'three'
 import { skills } from '@/data/projects'
 
@@ -11,7 +11,7 @@ import { skills } from '@/data/projects'
 
 function TunnelParticles({ isMobile }: { isMobile: boolean }) {
   const pointsRef = useRef<THREE.Points>(null!)
-  const count = isMobile ? 600 : 1200
+  const count = isMobile ? 250 : 600
 
   const { positions, colors } = useMemo(() => {
     const pos = new Float32Array(count * 3)
@@ -68,7 +68,7 @@ function TunnelParticles({ isMobile }: { isMobile: boolean }) {
 
 function TunnelRings({ isMobile }: { isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null!)
-  const ringCount = isMobile ? 25 : 50
+  const ringCount = isMobile ? 12 : 24
   const spread = 80
 
   useFrame((state) => {
@@ -89,7 +89,7 @@ function TunnelRings({ isMobile }: { isMobile: boolean }) {
     <group ref={groupRef}>
       {Array.from({ length: ringCount }).map((_, i) => (
         <mesh key={i} position={[0, 0, -i * (spread / ringCount)]}>
-          <torusGeometry args={[3.5, 0.01, 8, 32]} />
+          <torusGeometry args={[3.5, 0.01, 4, 24]} />
           <meshBasicMaterial color="#6366f1" wireframe transparent opacity={0.1} />
         </mesh>
       ))}
@@ -139,7 +139,10 @@ function SkillTag({ name, index, total, totalProgress }: {
     const vis = fadeIn * fadeOut
 
     groupRef.current.visible = vis > 0.01
-    if (!groupRef.current.visible) return
+    if (!groupRef.current.visible) {
+      if (divRef.current) divRef.current.style.opacity = '0'
+      return
+    }
 
     // Zoom: cloud rushes toward and through user — p 0.58→0.80 maps far→behind
     const zoomT = Math.min(1, Math.max(0, (p - 0.58) / 0.22))
@@ -170,7 +173,7 @@ function SkillTag({ name, index, total, totalProgress }: {
       <Html center distanceFactor={6} zIndexRange={[10, 0]}>
         <div
           ref={divRef}
-          className="px-3 py-1.5 rounded-lg bg-surface/90 border border-border text-text-primary text-xs font-mono whitespace-nowrap backdrop-blur-sm select-none cursor-default hover:border-accent/50 hover:text-accent transition-colors"
+          className="px-3 py-1.5 rounded-lg bg-surface/90 border border-border text-text-primary text-xs font-mono whitespace-nowrap select-none cursor-default hover:border-accent/50 hover:text-accent transition-colors"
           style={{ opacity: 0 }}
         >
           {name}
@@ -196,31 +199,12 @@ function SkillTagCloud({ totalProgress }: { totalProgress: React.MutableRefObjec
   )
 }
 
-// --- Camera Rig (linear travel + mouse parallax) ---
+// --- Camera Rig (frame-rate-independent scroll smoothing) ---
 
-function CameraRig({ totalProgress, isMobile, mousePos }: {
-  totalProgress: React.MutableRefObject<number>
-  isMobile: boolean
-  mousePos: React.MutableRefObject<{ x: number; y: number }>
-}) {
-  const smoothX = useRef(0)
-  const smoothY = useRef(0)
-  const smoothZ = useRef(5)
-
-  useFrame(({ camera }) => {
-    const p = totalProgress.current
-    const targetZ = 5 + p * -80
-    const targetX = !isMobile ? mousePos.current.x * 0.3 : 0
-    const targetY = !isMobile ? mousePos.current.y * 0.15 : 0
-
-    smoothX.current += (targetX - smoothX.current) * 0.08
-    smoothY.current += (targetY - smoothY.current) * 0.08
-    smoothZ.current += (targetZ - smoothZ.current) * 0.08
-
-    camera.position.set(smoothX.current, smoothY.current, smoothZ.current)
-    camera.lookAt(smoothX.current * 0.5, smoothY.current * 0.5, smoothZ.current - 10)
+function CameraRig({ totalProgress }: { totalProgress: React.MutableRefObject<number> }) {
+  useFrame(({ camera }, delta) => {
+    camera.position.z = THREE.MathUtils.damp(camera.position.z, 5 - totalProgress.current * 80, 16, Math.min(delta, 0.05))
   })
-
   return null
 }
 
@@ -229,29 +213,26 @@ function CameraRig({ totalProgress, isMobile, mousePos }: {
 interface UnifiedTunnelSceneProps {
   totalProgress: React.MutableRefObject<number>
   isMobile: boolean
-  mousePos: React.MutableRefObject<{ x: number; y: number }>
 }
 
-export function UnifiedTunnelScene({ totalProgress, isMobile, mousePos }: UnifiedTunnelSceneProps) {
+export function UnifiedTunnelScene({ totalProgress, isMobile }: UnifiedTunnelSceneProps) {
+  const { ref, ready, active } = useSceneActivity()
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5], fov: 70 }}
-      dpr={isMobile ? 1 : [1, 1.5]}
-      gl={{ alpha: true, antialias: !isMobile, powerPreference: 'high-performance' }}
-      style={{ position: 'absolute', inset: 0 }}
-    >
-      <fog attach="fog" args={['#050505', 10, 65]} />
-      <ambientLight intensity={0.3} />
-
-      <CameraRig totalProgress={totalProgress} isMobile={isMobile} mousePos={mousePos} />
-      <TunnelParticles isMobile={isMobile} />
-      <TunnelRings isMobile={isMobile} />
-      <SkillTagCloud totalProgress={totalProgress} />
-
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={isMobile ? 0.3 : 0.5} />
-        <Vignette darkness={0.5} offset={0.3} />
-      </EffectComposer>
-    </Canvas>
+    <div ref={ref} className="absolute inset-0">
+      {ready && (
+        <Canvas
+          frameloop={active ? 'always' : 'never'}
+          camera={{ position: [0, 0, 5], fov: 70 }}
+          dpr={1}
+          gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
+        >
+          <fog attach="fog" args={['#050505', 10, 65]} />
+          <CameraRig totalProgress={totalProgress} />
+          <TunnelParticles isMobile={isMobile} />
+          <TunnelRings isMobile={isMobile} />
+          <SkillTagCloud totalProgress={totalProgress} />
+        </Canvas>
+      )}
+    </div>
   )
 }

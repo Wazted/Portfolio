@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { ClientWork } from '@/components/sections/ClientWork'
 
 const SmoothScroll = dynamic(
   () => import('@/components/providers/SmoothScroll').then(m => m.SmoothScroll),
@@ -36,6 +37,7 @@ export default function Home() {
       <NoiseOverlay />
       <Header />
       <main>
+        <ClientWork />
         <Hero />
         <About />
         <TunnelExperience />

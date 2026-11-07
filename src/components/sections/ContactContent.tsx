@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
+const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 
 interface ContactContentProps {
   totalProgress: React.MutableRefObject<number>
@@ -135,12 +136,15 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
           </div>
 
           <div className="flex justify-center [&>div]:scale-[0.85] [&>div]:origin-center tablet:[&>div]:scale-100">
-            <ReCAPTCHA
+            {recaptchaSiteKey ? <ReCAPTCHA
               ref={recaptchaRef}
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              sitekey={recaptchaSiteKey}
               onChange={onCaptchaChange}
               theme="dark"
-            />
+            /> : <p className="text-sm text-text-secondary text-center">
+              Le formulaire est momentanément indisponible.{' '}
+              <a className="text-accent-light underline underline-offset-4" href="https://fr.linkedin.com/in/matias-campos-0b0779174" target="_blank" rel="noopener noreferrer">Contactez-moi sur LinkedIn<span className="sr-only"> (nouvel onglet)</span></a>.
+            </p>}
           </div>
 
           <motion.button

@@ -41,9 +41,10 @@ export function TunnelExperience() {
       style={{ height: isMobile ? '500vh' : '300vh' }}
     >
       {/* Navigation anchors — corrected for ScrollTrigger progress mapping */}
-      <div id="projects" className="absolute top-0" />
-      <div id="skills" className="absolute" style={{ top: isMobile ? '60%' : '33%' }} />
-      <div id="contact" className="absolute" style={{ top: isMobile ? '90%' : '50%' }} />
+      {/* Anchor position = target progress × (container height − viewport height). */}
+      <div id="projects" className="absolute" style={{ top: isMobile ? '9.6%' : '8%' }} />
+      <div id="skills" className="absolute" style={{ top: isMobile ? '54.4%' : '45.333%' }} />
+      <div id="contact" className="absolute" style={{ top: isMobile ? '67.2%' : '56%' }} />
 
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* 3D Tunnel */}

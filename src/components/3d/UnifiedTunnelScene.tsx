@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
+import { Html } from '@react-three/drei/web/Html'
 import { useSceneActivity } from '@/lib/hooks'
 import * as THREE from 'three'
 import { skills } from '@/data/projects'

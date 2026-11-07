@@ -9,8 +9,7 @@ const Hero = dynamic(
   () => import('@/components/sections/Hero').then(m => m.Hero)
 )
 const About = dynamic(
-  () => import('@/components/sections/About').then(m => m.About),
-  { ssr: false }
+  () => import('@/components/sections/About').then(m => m.About)
 )
 const TunnelExperience = dynamic(
   () => import('@/components/sections/TunnelExperience').then(m => m.TunnelExperience),
@@ -21,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
         <ClientWork />
         <About />

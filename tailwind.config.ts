@@ -17,7 +17,7 @@ const config: Config = {
         'accent-light': '#818cf8',
         'text-primary': '#f5f5f5',
         'text-secondary': '#a0a0a0',
-        'text-muted': '#666666',
+        'text-muted': '#8c8c97',
       },
       screens: {
         mobile: '375px',

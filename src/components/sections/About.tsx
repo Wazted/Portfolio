@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useRef } from 'react'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
-import { AboutScene } from '@/components/3d/AboutScene'
+import dynamic from 'next/dynamic'
+const AboutScene = dynamic(() => import('@/components/3d/AboutScene').then(m => m.AboutScene), { ssr: false })
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter'
-import { useIsMobile } from '@/lib/hooks'
+import { useIsMobile, useSceneActivity } from '@/lib/hooks'
 
 const highlights = [
   { number: 7, suffix: '+', label: "Années d'expérience" },
@@ -14,6 +15,7 @@ const highlights = [
 
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
+  const { ref: sceneRef, ready: sceneReady } = useSceneActivity()
   const scrollProgress = useRef(0)
   const isMobile = useIsMobile()
   const leftColRef = useRef<HTMLDivElement>(null)
@@ -86,9 +88,11 @@ export function About() {
 
   return (
     <section ref={sectionRef} id="about" className="relative py-32 tablet:py-40 overflow-hidden">
+      <div ref={sceneRef} className="absolute inset-0 pointer-events-none">
       <Suspense fallback={null}>
-        <AboutScene scrollProgress={scrollProgress} isMobile={isMobile} />
+        {sceneReady && <AboutScene scrollProgress={scrollProgress} isMobile={isMobile} />}
       </Suspense>
+      </div>
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div ref={titleRef}>

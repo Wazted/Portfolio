@@ -1,0 +1,28 @@
+export const caseStudies = [
+  {
+    slug: 'dermasana-academie', name: 'DermaSana Académie', category: 'Formation & esthétique',
+    url: 'https://academie.dermasana.fr/', image: '/images/clients/dermasana.webp',
+    title: 'Site vitrine de DermaSana Académie',
+    description: 'Création du site DermaSana Académie : présentation des formations esthétiques en Essonne, pages dédiées et outil de modification pour la propriétaire.',
+    introduction: 'Un site pour découvrir les formations esthétiques, comprendre leur contenu et prendre contact avec l’académie. La présentation associe une identité visuelle douce à un catalogue facile à parcourir.',
+    need: 'DermaSana Académie présente des formations en esthétique et en bien-être à Sainte-Geneviève-des-Bois, en Essonne. Le site doit aider les visiteurs à distinguer les programmes, découvrir l’approche pédagogique et trouver les informations utiles avant une demande de renseignement.',
+    design: 'Une palette claire, des tons chauds et une typographie aérée accompagnent l’univers de la formation et du soin. Les premières propositions définissent la hiérarchie des pages avant l’intégration des contenus.',
+    content: 'Le catalogue réunit les formations Head Spa, soin du visage, massage relaxant, réflexologie plantaire et préparation pratique à l’examen d’esthétique. Des pages dédiées permettent de consulter chaque programme. Les photos du centre et la présentation de l’académie donnent un contexte concret à l’offre.',
+    autonomy: 'Un espace de retours intégré permet à la propriétaire de désigner les éléments à modifier et de transmettre ses demandes. Leur prise en charge est automatisée, avec une intervention de ma part lorsque des ajustements nécessitent un contrôle ou un travail spécifique.',
+    launch: 'Les pages disposent de titres, descriptions et adresses dédiées. La structure du catalogue rend les formations accessibles depuis la navigation. Le site est déployé sur academie.dermasana.fr, avec une présentation adaptée à l’ordinateur et au mobile.',
+    features: ['Catalogue de cinq formations', 'Pages de programmes dédiées', 'Photos et présentation du centre', 'Demandes de modifications depuis le site'],
+  },
+  {
+    slug: 'nemesis-investigations', name: 'Némésis Investigations', category: 'Investigation privée',
+    url: 'https://nemesis-investigations.fr/', image: '/images/clients/nemesis.webp',
+    title: 'Site vitrine de Némésis Investigations',
+    description: 'Création du site Némésis Investigations : identité visuelle, parcours par besoin, présentation des enquêtes et édition accompagnée pour le propriétaire.',
+    introduction: 'Une présentation sobre pour une activité où la confiance et la discrétion comptent. Le site guide les particuliers, les entreprises et les professionnels du droit vers les prestations qui les concernent.',
+    need: 'L’agence d’investigations privées présente ses services en Nouvelle-Aquitaine. Le visiteur arrive avec une situation précise : il doit pouvoir comprendre les types d’enquêtes, trouver les informations sur l’agence et identifier rapidement comment prendre contact.',
+    design: 'Le noir et le bleu structurent une identité visuelle volontairement sobre. Les titres, les espaces et les appels à contact organisent la lecture. La direction graphique est posée avant de détailler les pages de prestations.',
+    content: 'La navigation distingue les domaines d’intervention et les publics : particuliers, entreprises et professionnels du droit. Des pages consacrées aux enquêtes, à la filature, aux tarifs et au contact complètent la présentation de l’agence.',
+    autonomy: 'Le propriétaire peut formuler ses retours directement depuis un outil intégré au site. Les demandes sont regroupées puis prises en charge automatiquement. Je peux intervenir sur les changements qui demandent une adaptation technique ou une validation complémentaire.',
+    launch: 'Les pages sont structurées autour des prestations et du contexte géographique réel de l’agence. Les titres, les descriptions et les données structurées accompagnent la mise en ligne sur nemesis-investigations.fr. Le parcours est utilisable sur ordinateur et sur mobile.',
+    features: ['Parcours par besoin et par public', 'Pages de prestations et de tarifs', 'Prise de contact mise en évidence', 'Outil de retours et de modifications intégré'],
+  },
+] as const

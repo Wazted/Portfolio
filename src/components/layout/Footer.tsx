@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export function Footer() {
   return (
     <footer className="border-t border-border py-8">
@@ -5,7 +7,9 @@ export function Footer() {
         <p className="text-text-muted text-sm">
           &copy; {new Date().getFullYear()} — Built with Next.js & Three.js
         </p>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-sm">
+          <Link href="/creation-site-vitrine" className="text-text-secondary hover:text-text-primary">Création de site vitrine</Link>
+          <Link href="/realisations" className="text-text-secondary hover:text-text-primary">Réalisations</Link>
           <a
             href="https://github.com/Wazted"
             target="_blank"

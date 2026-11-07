@@ -1,7 +1,7 @@
 .section {
   max-width: 1152px;
   margin-inline: auto;
-  padding: 164px 24px 0;
+  padding: 80px 24px 0;
   scroll-margin-top: 90px;
 }
 
@@ -88,7 +88,7 @@
 }
 
 @media (max-width: 767px) {
-  .section { padding: 124px 20px 0; }
+  .section { padding: 56px 20px 0; }
   .intro { grid-template-columns: 1fr; gap: 28px; margin-bottom: 52px; }
   .title { font-size: clamp(2.5rem, 8.5vw, 4rem); max-width: 16ch; }
   .pitch > p { max-width: 45ch; }

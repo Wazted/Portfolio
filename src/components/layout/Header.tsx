@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navLinks = [
+  { label: 'Accueil', href: '#hero' },
   { label: 'Sites web', href: '#sites' },
   { label: 'Méthode', href: '#methode' },
   { label: 'À propos', href: '#about' },
@@ -35,10 +36,10 @@ export function Header() {
     >
       <nav className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <a
-          href="#sites"
+          href="#hero"
           onClick={(e) => {
             e.preventDefault()
-            handleNavClick('#sites')
+            handleNavClick('#hero')
           }}
           className="text-xl font-bold text-gradient"
         >

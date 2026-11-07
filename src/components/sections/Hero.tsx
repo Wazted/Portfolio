@@ -17,31 +17,31 @@ export function Hero() {
     if (!sectionRef.current || !contentRef.current) return
 
     // Scroll-driven particle explosion
-    const st = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: 'bottom top',
-      onUpdate: (self) => {
-        scrollProgress.current = self.progress
-      },
-    })
-
-    // Fade out content on scroll
-    gsap.to(contentRef.current, {
-      opacity: 0,
-      y: -60,
-      ease: 'none',
-      scrollTrigger: {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: '40% top',
-        scrub: true,
-      },
-    })
+        end: 'bottom top',
+        onUpdate: (self) => {
+          scrollProgress.current = self.progress
+        },
+      })
 
-    return () => {
-      st.kill()
-    }
+      // Fade out content on scroll
+      gsap.to(contentRef.current, {
+        opacity: 0,
+        y: -60,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: '40% top',
+          scrub: true,
+        },
+      })
+
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -65,7 +65,7 @@ export function Hero() {
           </p>
         </motion.div>
 
-        <motion.h2
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -73,7 +73,7 @@ export function Hero() {
         >
           Développeur{' '}
           <span className="text-gradient">Web & Mobile</span>
-        </motion.h2>
+        </motion.h1>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

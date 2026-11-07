@@ -5,21 +5,8 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { ClientWork } from '@/components/sections/ClientWork'
 
-const SmoothScroll = dynamic(
-  () => import('@/components/providers/SmoothScroll').then(m => m.SmoothScroll),
-  { ssr: false }
-)
-const CustomCursor = dynamic(
-  () => import('@/components/ui/CustomCursor').then(m => m.CustomCursor),
-  { ssr: false }
-)
-const NoiseOverlay = dynamic(
-  () => import('@/components/ui/NoiseOverlay').then(m => m.NoiseOverlay),
-  { ssr: false }
-)
 const Hero = dynamic(
-  () => import('@/components/sections/Hero').then(m => m.Hero),
-  { ssr: false }
+  () => import('@/components/sections/Hero').then(m => m.Hero)
 )
 const About = dynamic(
   () => import('@/components/sections/About').then(m => m.About),
@@ -32,17 +19,15 @@ const TunnelExperience = dynamic(
 
 export default function Home() {
   return (
-    <SmoothScroll>
-      <CustomCursor />
-      <NoiseOverlay />
+    <>
       <Header />
       <main>
-        <ClientWork />
         <Hero />
+        <ClientWork />
         <About />
         <TunnelExperience />
       </main>
       <Footer />
-    </SmoothScroll>
+    </>
   )
 }

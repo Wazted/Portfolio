@@ -2,6 +2,33 @@
 
 import { useState, useEffect, useRef } from 'react'
 
+/** Mount WebGL on approach, and stop its render loop offscreen or in hidden tabs. */
+export function useSceneActivity() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [tabVisible, setTabVisible] = useState(true)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(entry.isIntersecting)
+      if (entry.isIntersecting) setReady(true)
+    })
+    observer.observe(element)
+    const onVisibility = () => setTabVisible(!document.hidden)
+    onVisibility()
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [])
+
+  return { ref, ready, active: visible && tabVisible }
+}
+
 /**
  * Mobile detection via matchMedia — only fires when the breakpoint
  * threshold is actually crossed, not on every resize pixel.

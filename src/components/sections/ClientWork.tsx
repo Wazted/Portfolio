@@ -55,10 +55,10 @@ export function ClientWork() {
   return (
     <section id="sites" className={styles.section} aria-labelledby="client-work-title">
       <div className={styles.intro}>
-        <h1 id="client-work-title" className={styles.title}>
+        <h2 id="client-work-title" className={styles.title}>
           Votre savoir-faire.<br />
           <span>Un site à sa hauteur.</span>
-        </h1>
+        </h2>
         <div className={styles.pitch}>
           <p>Je suis Matias. Je crée des sites qui présentent votre activité, donnent confiance et facilitent le premier contact. Du premier design à la mise en ligne, avec vous.</p>
           <a className={styles.primaryLink} href="#contact">Parlons de votre site <Arrow /></a>
@@ -71,10 +71,10 @@ export function ClientWork() {
         <p>Des sites conçus autour de ceux qui les font vivre.</p>
       </div>
       <div className={styles.workGrid}>
-        {clients.map((client, index) => (
+        {clients.map((client) => (
           <article key={client.name} className={styles.project}>
             <a className={styles.preview} href={client.url} target="_blank" rel="noopener noreferrer" aria-label={`Visiter ${client.name} (nouvel onglet)`}>
-              <Image src={client.image} alt={`Aperçu de la page d’accueil de ${client.name}`} width={1440} height={1000} sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1200px) 46vw, 540px" priority={index === 0} />
+              <Image src={client.image} alt={`Aperçu de la page d’accueil de ${client.name}`} width={1440} height={1000} sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1200px) 46vw, 540px" loading="lazy" />
               <span className={styles.visit}>Visiter le site <Arrow diagonal /></span>
             </a>
             <div className={styles.projectTitle}>

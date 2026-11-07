@@ -1,12 +1,14 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useProgressEffect, type ScrollProgress } from '@/lib/scroll-progress'
+
+import { useRef } from 'react'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { projects } from '@/data/projects'
 import { useIsMobile } from '@/lib/hooks'
 
 interface ProjectsContentProps {
-  totalProgress: React.MutableRefObject<number>
+  totalProgress: ScrollProgress
 }
 
 // Projects: fade-in 0.05→0.10, hold 0.10→0.44, fade-out 0.44→0.50
@@ -32,47 +34,40 @@ export function ProjectsContent({ totalProgress }: ProjectsContentProps) {
   const dotsRef = useRef<(HTMLDivElement | null)[]>([])
   const isMobile = useIsMobile()
 
-  useEffect(() => {
-    let raf: number
-    const update = () => {
-      const p = totalProgress.current
+  useProgressEffect(totalProgress, () => {
+    const p = totalProgress.current
 
-      if (overlayRef.current) {
-        const { opacity, scale } = getStyle(p)
-        overlayRef.current.style.opacity = String(opacity)
-        overlayRef.current.style.transform = `scale(${scale})`
-        overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
-      }
-
-      // Mobile: one card at a time based on scroll progress
-      if (isMobile) {
-        // p 0.10→0.48 maps to card index 0→(TOTAL-1) — starts after fade-in
-        const t = Math.max(0, Math.min(1, (p - 0.10) / 0.38))
-        const activeIndex = Math.min(TOTAL - 1, Math.floor(t * TOTAL))
-
-        cardsRef.current.forEach((card, i) => {
-          if (!card) return
-          if (i === activeIndex) {
-            card.style.opacity = '1'
-            card.style.transform = 'scale(1)'
-          } else {
-            card.style.opacity = '0'
-            card.style.transform = 'scale(0.92)'
-          }
-        })
-
-        dotsRef.current.forEach((dot, i) => {
-          if (!dot) return
-          dot.style.opacity = i === activeIndex ? '1' : '0.3'
-          dot.style.transform = i === activeIndex ? 'scale(1.3)' : 'scale(1)'
-        })
-      }
-
-      raf = requestAnimationFrame(update)
+    if (overlayRef.current) {
+      const { opacity, scale } = getStyle(p)
+      overlayRef.current.style.opacity = String(opacity)
+      overlayRef.current.style.transform = `scale(${scale})`
+      overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
     }
-    raf = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(raf)
-  }, [totalProgress, isMobile])
+
+    // Mobile: one card at a time based on scroll progress
+    if (isMobile) {
+      // p 0.10→0.48 maps to card index 0→(TOTAL-1) — starts after fade-in
+      const t = Math.max(0, Math.min(1, (p - 0.10) / 0.38))
+      const activeIndex = Math.min(TOTAL - 1, Math.floor(t * TOTAL))
+
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return
+        if (i === activeIndex) {
+          card.style.opacity = '1'
+          card.style.transform = 'scale(1)'
+        } else {
+          card.style.opacity = '0'
+          card.style.transform = 'scale(0.92)'
+        }
+      })
+
+      dotsRef.current.forEach((dot, i) => {
+        if (!dot) return
+        dot.style.opacity = i === activeIndex ? '1' : '0.3'
+        dot.style.transform = i === activeIndex ? 'scale(1.3)' : 'scale(1)'
+      })
+    }
+  })
 
   return (
     <div

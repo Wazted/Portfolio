@@ -1,6 +1,8 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback, FormEvent } from 'react'
+import { useProgressEffect, type ScrollProgress } from '@/lib/scroll-progress'
+
+import { useRef, useState, useCallback, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import ReCAPTCHA from 'react-google-recaptcha'
 
@@ -8,7 +10,7 @@ type FormStatus = 'idle' | 'sending' | 'success' | 'error'
 const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 
 interface ContactContentProps {
-  totalProgress: React.MutableRefObject<number>
+  totalProgress: ScrollProgress
 }
 
 // Contact: fade-in 0.75→0.82, hold 0.82→1.0 (no fade-out)
@@ -32,21 +34,15 @@ export function ContactContent({ totalProgress }: ContactContentProps) {
     setCaptchaToken(token)
   }, [])
 
-  useEffect(() => {
-    let raf: number
-    const update = () => {
-      if (overlayRef.current) {
-        const p = totalProgress.current
-        const { opacity, scale } = getStyle(p)
-        overlayRef.current.style.opacity = String(opacity)
-        overlayRef.current.style.transform = `scale(${scale})`
-        overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
-      }
-      raf = requestAnimationFrame(update)
+  useProgressEffect(totalProgress, () => {
+    if (overlayRef.current) {
+      const p = totalProgress.current
+      const { opacity, scale } = getStyle(p)
+      overlayRef.current.style.opacity = String(opacity)
+      overlayRef.current.style.transform = `scale(${scale})`
+      overlayRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none'
     }
-    raf = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(raf)
-  }, [totalProgress])
+  })
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()

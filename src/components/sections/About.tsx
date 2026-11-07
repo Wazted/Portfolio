@@ -22,64 +22,66 @@ export function About() {
   useEffect(() => {
     if (!sectionRef.current) return
 
-    const st = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top bottom',
-      end: 'bottom top',
-      onUpdate: (self) => {
-        scrollProgress.current = self.progress
-      },
-    })
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => {
+          scrollProgress.current = self.progress
+        },
+      })
 
-    // Title reveal
-    if (titleRef.current) {
-      gsap.fromTo(titleRef.current,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1, y: 0, duration: 1,
-          scrollTrigger: {
-            trigger: titleRef.current,
-            start: 'top 85%',
-            end: 'top 50%',
-            scrub: true,
-          },
-        }
-      )
-    }
+      // Title reveal
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1, y: 0, duration: 1,
+            scrollTrigger: {
+              trigger: titleRef.current,
+              start: 'top 85%',
+              end: 'top 50%',
+              scrub: true,
+            },
+          }
+        )
+      }
 
-    // Parallax: left content slides from left
-    if (leftColRef.current) {
-      gsap.fromTo(leftColRef.current,
-        { x: -120, opacity: 0 },
-        {
-          x: 0, opacity: 1,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            end: 'top 20%',
-            scrub: true,
-          },
-        }
-      )
-    }
+      // Parallax: left content slides from left
+      if (leftColRef.current) {
+        gsap.fromTo(leftColRef.current,
+          { x: -120, opacity: 0 },
+          {
+            x: 0, opacity: 1,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 70%',
+              end: 'top 20%',
+              scrub: true,
+            },
+          }
+        )
+      }
 
-    // Parallax: right content slides from right
-    if (rightColRef.current) {
-      gsap.fromTo(rightColRef.current,
-        { x: 120, opacity: 0 },
-        {
-          x: 0, opacity: 1,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            end: 'top 20%',
-            scrub: true,
-          },
-        }
-      )
-    }
+      // Parallax: right content slides from right
+      if (rightColRef.current) {
+        gsap.fromTo(rightColRef.current,
+          { x: 120, opacity: 0 },
+          {
+            x: 0, opacity: 1,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 70%',
+              end: 'top 20%',
+              scrub: true,
+            },
+          }
+        )
+      }
 
-    return () => st.kill()
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   return (

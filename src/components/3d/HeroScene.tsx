@@ -180,7 +180,7 @@ interface HeroSceneProps {
 export function HeroScene({ scrollProgress, isMobile }: HeroSceneProps) {
   const { ref, ready, active } = useSceneActivity()
   return (
-    <div ref={ref} className="absolute inset-0 -z-10">
+    <div ref={ref} className="hero-art absolute inset-0 -z-10">
       {ready && (
         <Canvas
           frameloop={active ? 'always' : 'never'}

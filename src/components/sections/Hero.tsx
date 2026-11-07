@@ -54,7 +54,7 @@ export function Hero() {
         <HeroScene scrollProgress={scrollProgress} isMobile={isMobile} />
       </Suspense>
 
-      <div ref={contentRef} className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div ref={contentRef} className="hero-content relative z-10 text-center px-6 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -79,7 +79,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8 }}
-          className="glass rounded-xl px-6 py-4 max-w-2xl mx-auto mb-10"
+          className="hero-description glass rounded-xl px-6 py-4 max-w-2xl mx-auto mb-10"
         >
           <p className="text-text-secondary text-lg tablet:text-xl leading-relaxed">
             Du pixel au serveur, je transforme vos idées en apps qui claquent — sans bug, promis (enfin presque).

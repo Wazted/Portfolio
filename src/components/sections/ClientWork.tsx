@@ -74,7 +74,7 @@ export function ClientWork() {
         {clients.map((client) => (
           <article key={client.name} className={styles.project}>
             <a className={styles.preview} href={client.url} target="_blank" rel="noopener noreferrer" aria-label={`Visiter ${client.name} (nouvel onglet)`}>
-              <Image src={client.image} alt={`Aperçu de la page d’accueil de ${client.name}`} width={1440} height={1000} sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1200px) 46vw, 540px" loading="lazy" />
+              <Image src={client.image} alt={`Aperçu de la page d’accueil de ${client.name}`} width={1440} height={1000} sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1248px) 46vw, 576px" loading="lazy" />
               <span className={styles.visit}>Visiter le site <Arrow diagonal /></span>
             </a>
             <div className={styles.projectTitle}>

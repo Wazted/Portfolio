@@ -112,3 +112,33 @@
   .preview img, .primaryLink { transition: none; }
   .preview:hover img { transform: none; }
 }
+
+/* Desktop composition; the approved mobile layout stays independent. */
+@media (min-width: 1024px) {
+  .section { max-width: 1248px; padding-top: 96px; }
+  .intro { grid-template-columns: 1.55fr 1fr; align-items: center; gap: 64px; margin-bottom: 72px; }
+  .title { font-size: clamp(2.5rem, 4.2vw, 3.75rem); line-height: 1.12; letter-spacing: -0.035em; text-wrap: initial; }
+  .title span { white-space: nowrap; }
+  .pitch > p { font-size: 16px; line-height: 1.75; max-width: 43ch; }
+  .pitch .methodLink { display: flex; width: fit-content; }
+  .workHeading { margin-bottom: 32px; padding-top: 24px; }
+  .workHeading h2 { font-size: 20px; letter-spacing: -0.02em; }
+  .workHeading p { font-size: 14px; }
+  .workGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
+  .project:nth-child(2) { margin-top: 32px; }
+  .projectTitle { flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 24px; }
+  .projectTitle h3 { font-size: 27px; }
+  .projectTitle > span { font-size: 13px; text-align: left; }
+  .projectDescription { font-size: 16px; line-height: 1.75; max-width: 51ch; }
+  .projectDetail { font-size: 12px; margin-top: 20px; }
+  .method { grid-template-columns: 0.85fr 1.15fr; gap: 100px; margin-top: 104px; padding-top: 64px; }
+  .methodIntro { position: sticky; top: 124px; align-self: start; }
+  .methodIntro h2 { font-size: clamp(2rem, 3vw, 2.5rem); line-height: 1.2; }
+  .methodIntro > p { font-size: 16px; max-width: 35ch; }
+  .phases li { padding-block: 32px; gap: 24px; }
+  .phases h3 { font-size: 23px; }
+  .phases p { font-size: 16px; line-height: 1.8; }
+  .deliverable { font-size: 13px; }
+  .closing { margin-top: 64px; padding-block: 48px; }
+  .closing p { font-size: 27px; }
+}
